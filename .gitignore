@@ -1,3 +1,5 @@
 *.class
 *.log
 *.cache
+/target/
+/project/target/
