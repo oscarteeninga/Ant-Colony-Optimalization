@@ -1,4 +1,4 @@
-import problem.{Item, Knapsack}
+package knapsack
 
 object KnapsackApp extends App {
   val items: Set[Item] = Set(

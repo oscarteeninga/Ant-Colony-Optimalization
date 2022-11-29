@@ -1,6 +1,4 @@
-package ant
-
-import problem.{Item, Knapsack, Solution}
+package knapsack
 
 class AntColony(problem: Knapsack, numberOfAnts: Int, alpha: Double, beta: Double, rho: Double) {
   var tau: Map[Item, Double] = problem.items.map(_ -> 1.0).toMap

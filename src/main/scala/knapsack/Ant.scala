@@ -1,6 +1,4 @@
-package ant
-
-import problem.Solution
+package knapsack
 
 case class Ant(id: Int, colony: AntColony, solution: Solution) {
 

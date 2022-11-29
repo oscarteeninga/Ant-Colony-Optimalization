@@ -1,6 +1,4 @@
-package problem
-
-import ant.AntColony
+package knapsack
 
 case class Item(id: Int, weight: Double, amount: Double)
 
