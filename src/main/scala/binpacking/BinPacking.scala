@@ -1,6 +1,12 @@
 package binpacking
 
+import scala.util.Random
+
 case class Item(id: Int, weight: Double)
+
+object Item {
+  def random(id: Int): Item = Item(id, new Random().nextDouble())
+}
 
 case class BinPacking(items: Set[Item], bin: Double) {
   require(items.forall(_.weight <= bin))
