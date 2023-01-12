@@ -1,8 +1,17 @@
 package knapsack
 
+case class Ant(id: Int, colony: AntColony, solution: Solution) {
+  def explore: Ant = {
+    colony.next(solution) match {
+      case Some(next) => Ant(id, colony, solution.put(next)).explore
+      case None => this
+    }
+  }
+}
 class AntColony(problem: Knapsack, numberOfAnts: Int, alpha: Double, beta: Double, rho: Double) {
-  var tau: Map[Item, Double] = problem.items.map(_ -> 1.0).toMap
-  val items: Set[Item] = problem.items
+
+  private var tau: Map[Item, Double] = problem.items.map(_ -> 1.0).toMap
+  protected val items: Set[Item] = problem.items
 
   def ants: Set[Ant] = (0 to numberOfAnts).map(id => Ant(id, this, Solution(problem.capibility))).toSet
 
@@ -10,7 +19,7 @@ class AntColony(problem: Knapsack, numberOfAnts: Int, alpha: Double, beta: Doubl
     (0 to iterations).map { it =>
       val solutions = ants.map(_.explore).map(_.solution)
       val best = solutions.maxBy(_.amounts)
-      println(s"$it (${best.amounts}/${best.capibility}): ${best.items.mkString(",")}")
+//      println(s"$it (${best.amounts}/${best.capibility}): ${best.items.mkString(",")}")
       update(solutions, best.amounts)
       best
     }.maxBy(_.amounts)
@@ -35,7 +44,7 @@ class AntColony(problem: Knapsack, numberOfAnts: Int, alpha: Double, beta: Doubl
     pick(available, probabilities(available, solution))
   }
 
-  private def pick(available: Set[Item], p: Map[Item, Double]): Option[Item] = {
+  protected def pick(available: Set[Item], p: Map[Item, Double]): Option[Item] = {
     val random = Math.random()
     var count = 0.0
     available.find {

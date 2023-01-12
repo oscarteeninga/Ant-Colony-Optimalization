@@ -11,6 +11,8 @@ case class Knapsack(capibility: Double, items: Set[Item])
 object Knapsack {
   def resolve(ants: Int, iterations: Int, knapsack: Knapsack, alfa: Double, beta: Double, rho: Double): Solution =
     new AntColony(knapsack, ants, alfa, beta, rho).run(iterations)
+  def resolve2D(ants: Int, iterations: Int, knapsack: Knapsack, alfa: Double, beta: Double, rho: Double): Solution =
+    new AntColony2D(knapsack, ants, alfa, beta, rho).run(iterations)
 }
 
 
