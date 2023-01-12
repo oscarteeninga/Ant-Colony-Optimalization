@@ -57,9 +57,13 @@ object KnapsackApp extends App {
     , 13)
   val items: Set[Item] = values.zipWithIndex.zip(weights).collect { case ((id, value), weight) if weight > 0 => Item(id, weight, value) }.toSet
 
-  val best = Knapsack.resolve(100, 100, Knapsack(capacity, items), 1, 1, 1)
-  println(s"BEST: ${best.amounts} - ${best.items.size}")
+  val best = Knapsack.resolve(10, 100, Knapsack(capacity, items), 1, 1, 1)
+  println(s"BEST: ${best.amounts}/${best.capibility} - ${best.items.size}")
 
-  val best2D = Knapsack.resolve2D(100, 100, Knapsack(capacity, items), 1, 1, 1)
-  println(s"BEST-2D: ${best2D.amounts} - ${best2D.items.size}")
+  val best2D = Knapsack.resolve2D(10, 100, Knapsack(capacity, items), 1, 1, 1)
+  println(s"BEST-2D: ${best2D.amounts}/${best2D.capibility} - ${best2D.items.size}")
+
+//  val naiveBest = Knapsack.resolveNaive(Knapsack(capacity, items))
+//  println(s"BEST-NAIVE: ${naiveBest.amounts}/${naiveBest.capibility} - ${naiveBest.items.size}")
+
 }
