@@ -1,8 +1,19 @@
 package binpacking
 
+import binpacking.BinPacking.SetOps
+
+case class Ant(id: Int, colony: AntColony, solution: Solution) {
+
+  def explore: Ant =
+    colony.next(solution) match {
+      case sol: Solution if sol.left.isEmpty => this
+      case sol => Ant(id, colony, sol).explore
+    }
+}
+
 class AntColony(problem: BinPacking, numberOfAnts: Int, alpha: Double, beta: Double, rho: Double) {
-  var tau: Map[(Item, Item), Double] = Map.empty.withDefaultValue(1.0)
   val items: Set[Item] = problem.items
+  var tau: Map[(Item, Item), Double] = items.join(items).map(_ -> 1.0).toMap
 
   def ants: Set[Ant] = (0 to numberOfAnts).map(id => Ant(id, this, Solution(List(Bin(Set.empty, problem.bin)), problem.items))).toSet
 
@@ -10,18 +21,18 @@ class AntColony(problem: BinPacking, numberOfAnts: Int, alpha: Double, beta: Dou
     (0 to iterations).map { it =>
       val solutions = ants.map(_.explore).map(_.solution)
       val best = solutions.minBy(_.bins.size)
-      println(s"$it (${best.bins.size}/$best): ${best.bins.map(_.items).mkString(",")}")
+      //      println(s"$it (${best.bins.size}/$best): ${best.bins.map(_.items).mkString(",")}")
       update(solutions, best)
       best
     }.minBy(_.bins.size)
 
 
   def update(solutions: Set[Solution], best: Solution): Unit = {
-    tau.map { case ((item1, item2), pheromone) =>
+    tau = tau.map { case ((item1, item2), pheromone) =>
       val mij = solutions.count(_.contains(item1, item2))
       val fs = best.bins.map(bin => Math.pow(bin.items.map(_.weight).sum / problem.bin, 2)).sum / best.bins.size
       (item1, item2) -> (pheromone * (1 - rho) + mij * fs)
-    }
+    }.withDefaultValue(1.0)
   }
 
   def getTau(bin: Bin, item: Item): Double =

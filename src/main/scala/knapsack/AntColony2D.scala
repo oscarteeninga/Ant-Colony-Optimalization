@@ -21,12 +21,8 @@ class AntColony2D(problem: Knapsack, numberOfAnts: Int, alpha: Double, beta: Dou
 
   override def probabilities(available: Set[Item], solution: Solution): Map[Item, Double] = {
     val u = available.map(item => item -> item.amount / (item.weight / solution.capibility)).toMap
-    val probability = available.toList.map(item => Math.pow(getTau(item), alpha) * Math.pow(u(item), beta))
+    val probability = available.toList.map(item => Math.pow(tau2D.flatMap(_._2.get(item)).sum, alpha) * Math.pow(u(item), beta))
     val sum = probability.sum
     available.zip(probability).map { case (item, prob) => item -> prob / sum }.toMap
-  }
-
-  private def getTau(item: Item): Double = {
-    tau2D.collect { case (_, map) => map.get(item) }.flatten.sum
   }
 }

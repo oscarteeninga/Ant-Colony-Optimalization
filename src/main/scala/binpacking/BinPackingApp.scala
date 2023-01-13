@@ -1,23 +1,21 @@
 package binpacking
 
 object BinPackingApp extends App {
-//  val items: Set[Item] = Set(
-//    Item(1, 1),
-//    Item(2, 2),
-//    Item(8, 10),
-//    Item(3, 1),
-//    Item(4, 1),
-//    Item(7, 10),
-//    Item(5, 3),
-//    Item(6, 3),
-//    Item(11, 5),
-//    Item(12, 3),
-//    Item(13, 4),
-//    Item(15, 1),
-//  )
-  val items: Set[Item] = Set(2, 5, 4, 7, 1, 3, 8).map(id => Item(id, id))
-//  val items: Set[Item] = (0 to 1000).map(Item.random).toSet
-  val packing = BinPacking(items, 10)
-  val best = BinPacking.resolve(10, 100, packing, 1, 1, 1)
-  println(s"BEST: ${best.bins.size}")
+
+  // Problem definition from https://developers.google.com/optimization/bin/bin_packing#java_1
+  val weights = List(48, 30, 19, 36, 36, 27, 42, 42, 36, 24, 30)
+  val items: Set[Item] = weights.zipWithIndex.map { case (weight, id) => Item(id, weight) }.toSet
+  val packing = BinPacking(items, 100)
+
+  def print(bins: List[Bin]): String =
+    bins.map(bin => s"[${bin.items.map(_.id).mkString(",")}](${bin.capacity})").mkString(" ")
+
+  val naive = BinPacking.resolveNaive(packing)
+  println(s"BEST-NAIVE: ${naive.bins.size} - " + print(naive.bins))
+
+  val best = BinPacking.resolve(10, 100, packing, 0.5, 0.5, 0.5)
+  println(s"BEST: ${best.bins.size} - " + print(best.bins))
+
+  val best2D = BinPacking.resolve2D(10, 100, packing, 0.5, 0.5, 0.5)
+  println(s"BEST-2D: ${best2D.bins.size} - " + print(best2D.bins))
 }
