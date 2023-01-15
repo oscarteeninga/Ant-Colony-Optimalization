@@ -1,5 +1,15 @@
 package tsp
 
+
+case class Ant(id: Int, colony: AntSystem, solution: Solution) {
+  def explore: Ant = {
+    colony.next(solution) match {
+      case Some(edge) => Ant(id, colony, solution.put(edge)).explore
+      case None => this
+    }
+  }
+}
+
 class AntSystem(problem: Tsp, numberOfAnts: Int, alpha: Double, beta: Double, rho: Double) {
   val tauZero: Double = {
     var next = problem.nodes.nodes.head
@@ -35,7 +45,7 @@ class AntSystem(problem: Tsp, numberOfAnts: Int, alpha: Double, beta: Double, rh
         problem.edges.find(last, first).map(solution.put)
       }
       val best = solutions.minBy(_.distance)
-      println(s"$it (${best.distance}): ${best.nodes.map(_.id).mkString(",")}")
+//      println(s"$it (${best.distance}): ${best.nodes.map(_.id).mkString(",")}")
       update(solutions)
       best
     }.minBy(_.distance)
