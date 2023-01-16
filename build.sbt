@@ -4,5 +4,5 @@ ThisBuild / scalaVersion := "2.13.10"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "Ant-Colony-Optimalization"
+    name := "antsystem.Ant-Colony-Optimalization"
   )

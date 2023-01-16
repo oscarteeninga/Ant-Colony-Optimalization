@@ -23,8 +23,8 @@ object TspApp extends App {
   val edges = nodes.flatMap(node => distanceMatrix(node.id).zipWithIndex.collect { case (distance, nodeId) if nodeId != node.id => Edge(node, Node(nodeId), distance) })
 
   val tsp = Tsp(Nodes(nodes: _*), Edges(edges: _*))
-//  val best = Tsp.resolve(10, 100, tsp, 1, 1, 0.5)
-//  println(s"BEST: ${best.distance} - ${best.nodes.map(_.id).mkString(",")}")
+  val best = Tsp.resolve(10, 100, tsp, 1, 1, 0.5)
+  println(s"BEST: ${best.distance} - ${best.nodes.map(_.id).mkString(",")}")
 
   val best2D = Tsp.resolve2D(10, 100, tsp, 1, 1, 0.5)
   println(s"BEST2D: ${best2D.distance} - ${best2D.nodes.map(_.id).mkString(",")}")
