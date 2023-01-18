@@ -18,6 +18,8 @@ case class Edges(edges: Edge*) {
 case class TspSolution(nodes: List[Node], edges: List[Edge], distance: Double) extends Solution[Edge] {
   def startWith(node: Node): TspSolution = TspSolution(List(node), List.empty, 0)
   def put(edge: Edge): TspSolution = TspSolution(edge.node2 :: nodes, edge :: edges, distance + edge.distance)
+
+  def score: Double = distance
 }
 
 object TspSolution {

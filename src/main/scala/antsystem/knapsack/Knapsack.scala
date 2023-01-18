@@ -7,12 +7,15 @@ case class Package(id: Int, weight: Double, amount: Double) extends Item
 case class KnapsackSolution(items: List[Package], capacity: Double, amounts: Double = 0.0) extends Solution[Package] {
   def put(item: Package): KnapsackSolution = KnapsackSolution(item :: items, capacity - item.weight, amounts + item.amount)
 
+  def score: Double = amounts
+
   override def toString: String = items.map(_.id).mkString(",")
 }
 
 case class Knapsack(items: Set[Package], capacity: Double)
   extends Problem[KnapsackSolution, Package] {
   override type T = Map[Package, Double]
+
 }
 
 object Knapsack {
@@ -23,6 +26,7 @@ object Knapsack {
       if (available.isEmpty) acc
       else available.map(item => resolve(items - item, acc.put(item))).maxBy(_.amounts)
     }
+
     resolve(knapsack.items, KnapsackSolution(List.empty, knapsack.capacity))
   }
 

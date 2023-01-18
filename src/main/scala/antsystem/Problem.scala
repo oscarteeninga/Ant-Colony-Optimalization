@@ -10,6 +10,8 @@ trait Problem[S <: Solution[I], I <: Item] {
 
 trait Solution[I <: Item] {
   def put(item: I): Solution[I]
+
+  def score: Double
 }
 
 trait Item

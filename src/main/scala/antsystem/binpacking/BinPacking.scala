@@ -23,6 +23,8 @@ case class BinPackingSolution(bins: List[Bin], left: Set[Rubbish]) extends Solut
   def fits(item: Rubbish): Boolean =
     bin.capacity >= item.weight
 
+  def score: Double = bins.size
+
   override def toString: String =
     bins.map(bin => s"[${bin.items.map(_.id).mkString(",")}](${bin.capacity})").mkString(" ")
 }
