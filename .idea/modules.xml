@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Ant-Colony-Optimalization.iml" filepath="$PROJECT_DIR$/.idea/modules/Ant-Colony-Optimalization.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Ant-Colony-Optimalization-build.iml" filepath="$PROJECT_DIR$/.idea/modules/Ant-Colony-Optimalization-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/antsystem.Ant-Colony-Optimalization.iml" filepath="$PROJECT_DIR$/.idea/modules/antsystem.Ant-Colony-Optimalization.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/antsystem.Ant-Colony-Optimalization-build.iml" filepath="$PROJECT_DIR$/.idea/modules/antsystem.Ant-Colony-Optimalization-build.iml" />
     </modules>
   </component>
 </project>

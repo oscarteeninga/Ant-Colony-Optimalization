@@ -1,17 +1,12 @@
-package tsp
+package antsystem.tsp
 
+import antsystem.AntSystem
+import com.typesafe.scalalogging.LazyLogging
 
-case class Ant(id: Int, colony: AntSystem, solution: Solution) {
-  def explore: Ant = {
-    colony.next(solution) match {
-      case Some(edge) => Ant(id, colony, solution.put(edge)).explore
-      case None => this
-    }
-  }
-}
+case class TspSystem(problem: Tsp, quantity: Int, alpha: Double, beta: Double, rho: Double)
+  extends AntSystem[Tsp, TspSolution, Edge] with LazyLogging {
 
-class AntSystem(problem: Tsp, numberOfAnts: Int, alpha: Double, beta: Double, rho: Double) {
-  val tauZero: Double = {
+  private val tauZero: Double = {
     var next = problem.nodes.nodes.head
     var available = problem.nodes.nodes.tail.toSet
     var distance = 0.0
@@ -32,53 +27,42 @@ class AntSystem(problem: Tsp, numberOfAnts: Int, alpha: Double, beta: Double, rh
     distance
   }
 
-  var tau: Map[Edge, Double] = Map.empty.withDefaultValue(tauZero)
+  var tau: Map[Edge, Double] = problem.items.map(_ -> tauZero).toMap
 
-  def ants: Set[Ant] =
-    (0 to numberOfAnts).map(id => Ant(id, this, Solution.Empty.startWith(problem.nodes.nodes.head))).toSet
-
-  def run(iterations: Int): Solution =
+  def run(iterations: Int): TspSolution =
     (0 to iterations).map { it =>
-      val solutions = ants.map(_.explore).map(_.solution).flatMap { solution =>
+      val solutions = ants.map(_.explore).flatMap { solution =>
         val last = solution.nodes.head
         val first = solution.nodes.last
         problem.edges.find(last, first).map(solution.put)
       }
       val best = solutions.minBy(_.distance)
-//      println(s"$it (${best.distance}): ${best.nodes.map(_.id).mkString(",")}")
-      update(solutions)
+//      logger.debug(s"$it (${best.distance}): ${best.nodes.map(_.id).mkString(",")}")
+      update(solutions, best)
       best
     }.minBy(_.distance)
 
-  def probabilities(edges: Set[Edge]): Map[Edge, Double] = {
+  def probabilities(edges: Set[Edge], solution: TspSolution): Map[Edge, Double] = {
     val divider = edges.map(compute).sum
     edges.map(edge => edge -> compute(edge) / divider).toMap
   }
 
-  def next(solution: Solution): Option[Edge] = {
+  def next(solution: TspSolution): Option[TspSolution] = {
     val actual = solution.nodes.head
     val neighbours = problem.edges.getFrom(actual)
     // When neighbour already in solution, that is not available then
     val available = neighbours.filterNot(edge => solution.nodes.contains(edge.node2))
-    if (available.isEmpty) None else Some(pick(available, probabilities(available)))
+    if (available.isEmpty) None else Some(solution.put(pick(available, probabilities(available, solution))))
   }
 
-  def update(solutions: Set[Solution]): Unit = {
+  def update(solutions: Set[TspSolution], best: TspSolution): Unit = {
     solutions.foreach { solution =>
       solution.edges.foreach(edge => tau = tau.updated(edge, tau(edge) + 1 / solution.distance))
     }
-    tau = tau.map { case (edge, pheromone) => edge -> pheromone * (1 - rho) }.withDefaultValue(tauZero)
+    tau = tau.map { case (edge, pheromone) => edge -> pheromone * (1 - rho) }
   }
 
-  private def pick(available: Set[Edge], p: Map[Edge, Double]): Edge = {
-    val random = Math.random()
-    var count = 0.0
-    available.find {
-      item =>
-        count += p(item)
-        count >= random
-    }.get
-  }
+  protected def emptySolution: TspSolution = TspSolution.Empty.startWith(problem.nodes.nodes.head)
 
   private def compute(edge: Edge): Double =
     Math.pow(tau(edge), alpha) * Math.pow(1 / edge.distance, beta)
