@@ -17,16 +17,15 @@ object Benchmark extends App {
   case class BenchmarkParameters(ants: Int, iterations: Int, alfa: Double, beta: Double, rho: Double)
 
   // Benchmark configuration
-  val formatter = DateTimeFormatter.ofPattern("YY-MM-dd HH:mm:ss")
-  val separator = ";"
-  val range: List[Double] = (1 to 10).map(_ / 10.0).toList
-  val ants = 10
-  val iterations = 1000
+  private val formatter = DateTimeFormatter.ofPattern("YY-MM-dd HH:mm:ss")
+  private val separator = ";"
 
   val parameters: List[BenchmarkParameters] = for {
-    alfa <- range
-    beta <- range
-    rho <- range
+    alfa <- List(0.5, 1.0, 1.5, 2.0, 3.0)
+    beta <- List(0.5, 1.0, 1.5, 2.0, 3.0)
+    rho <- List(0.1, 0.3, 0.5, 0.7, 0.9)
+    ants <- List(10, 100)
+    iterations <- List(100, 1000)
   } yield BenchmarkParameters(ants, iterations, alfa, beta, rho)
 
   def runAndSaveResults[S <: Solution[_]](runner: BenchmarkParameters => S, parameters: List[BenchmarkParameters]): List[List[String]] =
@@ -47,6 +46,9 @@ object Benchmark extends App {
   def run(problem: MultiTsp, params: BenchmarkParameters): Set[MultiTspSolution] =
     MultiTsp.resolve(params.ants, params.iterations, problem, params.alfa, params.beta, params.rho)
 
+  def run2D(problem: MultiTsp, params: BenchmarkParameters, z: Int): Set[MultiTspSolution] =
+    MultiTsp.resolve2D(params.ants, params.iterations, problem, params.alfa, params.beta, params.rho, z)
+
   def write(results: List[List[String]], dir: String): Unit = {
     val date = LocalDateTime.now().format(formatter)
     val filename = s"src/main/scala/antsystem/bench/result/$dir/$date.csv"
@@ -54,12 +56,12 @@ object Benchmark extends App {
     results.foreach(row => writer.write(row.mkString(separator) + "\n"))
     writer.close()
   }
-
+//
 //  write(runAndSaveResults(run(KnapsackExample.Example, _), parameters), "knapsack")
 //  write(runAndSaveResults(run(BinPackingExample.Example, _), parameters), "binpacking")
 //  write(runAndSaveResults(run(TspExample.Example, _), parameters), "tsp")
-
-  println(run(MultiTspExample.EasyExample, BenchmarkParameters(ants, iterations, 0.5, 0.5, 0.5)).map(_.criteriaValues.criteria))
+//  write(runAndSaveResults(run(MultiTspExample.EasyExample, _), parameters), "multitsp")
+  println(run2D(MultiTspExample.Example, BenchmarkParameters(10, 1000, 0.5, 0.5, 0.5), 10).map(_.criteriaValues.criteria))
 }
 
 

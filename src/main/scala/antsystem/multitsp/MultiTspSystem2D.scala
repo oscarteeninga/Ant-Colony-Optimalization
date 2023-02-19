@@ -3,13 +3,13 @@ package antsystem.multitsp
 import com.typesafe.scalalogging.LazyLogging
 
 
-class MultiTspSystem2D(problem: MultiTsp, quantity: Int, alpha: Double, beta: Double, rho: Double)
+class MultiTspSystem2D(problem: MultiTsp, quantity: Int, alpha: Double, beta: Double, rho: Double, z: Int)
   extends MultiTspSystem(problem, quantity, alpha, beta, rho)
     with LazyLogging {
-  
+
   private val tauZero: Double = 1.0
 
-  var tau2D: Map[Edge, List[Double]] = problem.items.map(_ -> problem.edges.edges.map(_ => tauZero).toList).toMap
+  var tau2D: Map[Edge, Map[Int, Double]] = problem.items.map(_ -> (0 to z).map(_ -> tauZero).toMap).toMap
 
   override def runPareto(iterations: Int): Set[MultiTspSolution] =
     pareto {
@@ -29,11 +29,11 @@ class MultiTspSystem2D(problem: MultiTsp, quantity: Int, alpha: Double, beta: Do
 
   override def update(paretoFronts: List[Set[MultiTspSolution]]): Unit = {
     val paretoFrontsValues = paretoFronts.zipWithIndex.map { case (front, index) => front -> (10 - index) / 10 }
-    paretoFrontsValues.foreach { case (solutions, factor) =>
+    paretoFrontsValues.take(z).zipWithIndex.foreach { case ((solutions, factor), index) =>
       solutions.foreach { solution =>
-        solution.edges.foreach(edge => tau = tau.updated(edge, tau(edge) + 1 * factor))
+        solution.edges.foreach(edge => tau2D = tau2D.updated(edge, tau2D(edge).updated(index, tau2D(edge)(index) + factor)))
       }
     }
-    tau = tau.map { case (edge, pheromone) => edge -> pheromone * (1 - rho) }
+    tau2D = tau2D.map { case (edge, pheromones) => edge -> pheromones.map { case (key, value) => (key, value * (1 - rho)) } }
   }
 }

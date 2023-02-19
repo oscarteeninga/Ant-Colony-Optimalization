@@ -40,10 +40,11 @@ case class MultiTspSystem(problem: MultiTsp, quantity: Int, alpha: Double, beta:
   }
 
   def update(paretoFronts: List[Set[MultiTspSolution]]): Unit = {
-    val paretoFrontsValues = paretoFronts.zipWithIndex.map { case (front, index) => front -> (10 - index) / 10 }
+    val fronts = paretoFronts.size + 1
+    val paretoFrontsValues = paretoFronts.zipWithIndex.map { case (front, index) => front -> (fronts - index) / fronts }
     paretoFrontsValues.foreach { case (solutions, factor) =>
       solutions.foreach { solution =>
-        solution.edges.foreach(edge => tau = tau.updated(edge, tau(edge) + 1 * factor))
+        solution.edges.foreach(edge => tau = tau.updated(edge, tau(edge) + factor))
       }
     }
     tau = tau.map { case (edge, pheromone) => edge -> pheromone * (1 - rho) }

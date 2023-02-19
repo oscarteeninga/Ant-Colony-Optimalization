@@ -40,11 +40,26 @@ object MultiTspExample {
       Array(2145, 357, 1453, 1280, 586, 887, 1114, 2300, 653, 1272, 1017, 0, 504),
       Array(1972, 579, 1260, 987, 371, 999, 701, 2099, 600, 1162, 1200, 504, 0)
     )
+    val securityMatrix = Array(
+      Array(0, 543, 423, 2543, 213, 3214, 1213, 2131, 4321, 1231, 653, 342, 123),
+      Array(543, 0, 3424, 1321, 4325, 123, 4325, 123, 342, 2143, 2432, 1234, 9776),
+      Array(5433, 422, 0, 1343, 323, 435, 4254, 123, 5343, 1432, 1213, 143, 1232),
+      Array(543, 4232, 1421, 0, 5435, 1234, 563, 312, 1243, 5345, 1243, 1280, 54),
+      Array(3432, 3531, 533, 1231, 0, 5431, 5341, 645, 6453, 1232, 6445, 323, 3435),
+      Array(523, 1432, 6456, 8324, 532, 0, 135, 1354, 1765, 153, 3543, 22, 1254),
+      Array(142, 5253, 1254, 212, 531, 164, 0, 1432, 1653, 4314, 3891, 114, 5701),
+      Array(3422, 121, 5431, 5315, 633, 2643, 6542, 0, 6532, 232, 6254, 234, 532),
+      Array(453, 5432, 433, 7652, 2363, 7425, 234, 6452, 0, 2632, 233, 6326, 2643),
+      Array(5432, 4232, 4532, 3426, 8634, 2346, 7534, 263, 235, 0, 7624, 235, 6543),
+      Array(9324, 754, 6246, 2543, 4365, 7542, 5432, 4345, 2433, 2463, 0, 5233, 654),
+      Array(524, 4263, 3243, 2345, 6522, 6354, 3234, 5432, 4323, 654, 5423, 0, 5432),
+      Array(343, 5432, 5432, 543, 234, 3543, 523, 543, 5432, 432, 6325, 6542, 0)
+    )
 
     val nodes = distanceMatrix.indices.map(id => Node(id)).toList
-    val edges = nodes.flatMap(node => distanceMatrix(node.id).zipWithIndex.collect {
-      case (distance, nodeId) if nodeId != node.id =>
-        Edge(node, Node(nodeId), CriteriaValues(Map(Distance -> distance, Security -> Math.abs(new Random().nextInt()) % 5000)))
+    val edges = nodes.flatMap(node => distanceMatrix(node.id).zip(securityMatrix(node.id)).zipWithIndex.collect {
+      case (criteria, nodeId) if nodeId != node.id =>
+        Edge(node, Node(nodeId), CriteriaValues(Map(Distance -> criteria._1, Security -> criteria._2)))
     })
 
     MultiTsp(Nodes(nodes: _*), Edges(edges: _*))

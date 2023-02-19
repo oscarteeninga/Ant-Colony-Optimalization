@@ -64,5 +64,8 @@ case class MultiTsp(nodes: Nodes, edges: Edges) extends Problem[MultiTspSolution
 object MultiTsp {
   def resolve(ants: Int, iterations: Int, problem: MultiTsp, alfa: Double, beta: Double, rho: Double): Set[MultiTspSolution] =
     MultiTspSystem(problem, ants, alfa, beta, rho).runPareto(iterations)
+
+  def resolve2D(ants: Int, iterations: Int, problem: MultiTsp, alfa: Double, beta: Double, rho: Double, z: Int): Set[MultiTspSolution] =
+    new MultiTspSystem2D(problem, ants, alfa, beta, rho, z).runPareto(iterations)
 }
 
