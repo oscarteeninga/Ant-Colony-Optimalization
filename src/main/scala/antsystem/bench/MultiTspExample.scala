@@ -1,9 +1,7 @@
 package antsystem.bench
 
-import antsystem.multitsp.Criteria._
-import antsystem.multitsp.{Edge, _}
-
-import scala.util.Random
+import antsystem.multi.Criteria.{Distance, Security}
+import antsystem.multi._
 
 object MultiTspExample {
 

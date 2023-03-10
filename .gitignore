@@ -4,3 +4,4 @@
 /target/
 /project/target/
 *.csv
+/resources/plot

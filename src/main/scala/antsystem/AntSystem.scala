@@ -16,9 +16,9 @@ trait AntSystem[P <: Problem[S, I], S <: Solution[I], I <: Item] extends LazyLog
 
   def ants: Set[Ant[P, S, I]] = (0 to quantity).map(Ant(_, this, emptySolution)).toSet
 
-  def update(solutions: Set[S], best: S): Unit
+  def update(paretoFronts: List[Set[S]]): Unit
 
-  def probabilities(available: Set[I], solution: S): Map[I, Double]
+  def probabilities(available: Set[I]): Map[I, Double]
 
   def next(solution: S): Option[S]
 

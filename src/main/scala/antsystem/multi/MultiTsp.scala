@@ -1,19 +1,19 @@
-package antsystem.multitsp
+package antsystem.multi
 
-import antsystem.multitsp.Criteria._
+import antsystem.multi.Criteria._
 import antsystem.{Item, Problem, Solution}
 
 case class Node(id: Int)
 
 sealed trait Criteria {
-  def compare(a: Double, b: Double): Int = if (a > b) 1 else if (a < b) -1 else 0
+  def compare(a: Double, b: Double): Int = if (a > b) -1 else if (a < b) 1 else 0
 }
 
 object Criteria {
   case object Distance extends Criteria
 
   case object Security extends Criteria {
-    override def compare(a: Double, b: Double): Int = -1 * super.compare(a, b)
+    override def compare(a: Double, b: Double): Int = if (a > b) 1 else if (a < b) -1 else 0
   }
 }
 
@@ -47,6 +47,8 @@ case class MultiTspSolution(nodes: List[Node], edges: List[Edge], criteriaValues
     criteriaValues.isDominatedBy(other.criteriaValues)
 
   def score: Double = criteriaValues.criteria.values.sum
+
+  override def toString: String = criteriaValues.criteria.values.mkString("(", ":", ")")
 }
 
 object MultiTspSolution {
@@ -63,9 +65,9 @@ case class MultiTsp(nodes: Nodes, edges: Edges) extends Problem[MultiTspSolution
 
 object MultiTsp {
   def resolve(ants: Int, iterations: Int, problem: MultiTsp, alfa: Double, beta: Double, rho: Double): Set[MultiTspSolution] =
-    MultiTspSystem(problem, ants, alfa, beta, rho).runPareto(iterations)
+    MultiAntSystem(problem, ants, alfa, beta, rho).runPareto(iterations)
 
   def resolve2D(ants: Int, iterations: Int, problem: MultiTsp, alfa: Double, beta: Double, rho: Double, z: Int): Set[MultiTspSolution] =
-    new MultiTspSystem2D(problem, ants, alfa, beta, rho, z).runPareto(iterations)
+    new MultiAntSystem2D(problem, ants, alfa, beta, rho, z).runPareto(iterations)
 }
 
