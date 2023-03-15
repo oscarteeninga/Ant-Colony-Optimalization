@@ -21,7 +21,7 @@ object Plotter extends App {
   val iterations = 100
   val ants = 10
   val beta = 0.5
-  val rho = 0.1
+  val rho = 0.0
   val z = 10
 
   private val results = for {

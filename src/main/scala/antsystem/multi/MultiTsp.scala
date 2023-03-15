@@ -6,14 +6,15 @@ import antsystem.{Item, Problem, Solution}
 case class Node(id: Int)
 
 sealed trait Criteria {
-  def compare(a: Double, b: Double): Int = if (a > b) -1 else if (a < b) 1 else 0
+  def factor: Int = -1
+  def compare(a: Double, b: Double): Int = if (a > b) factor else if (a < b) -factor else 0
 }
 
 object Criteria {
   case object Distance extends Criteria
 
   case object Security extends Criteria {
-    override def compare(a: Double, b: Double): Int = if (a > b) 1 else if (a < b) -1 else 0
+    override def factor: Int = 1
   }
 }
 
@@ -24,6 +25,8 @@ case class CriteriaValues(criteria: Map[Criteria, Double] = Map(Distance -> 0, S
 
   def ++(other: CriteriaValues): CriteriaValues =
     CriteriaValues(criteria.map { case (key, value) => key -> (other.criteria(key) + value) })
+
+  def avg: Double = criteria.map { case (key, value) => key.factor * value }.sum
 }
 
 case class Edge(node1: Node, node2: Node, criteria: CriteriaValues) extends Item
@@ -65,9 +68,9 @@ case class MultiTsp(nodes: Nodes, edges: Edges) extends Problem[MultiTspSolution
 
 object MultiTsp {
   def resolve(ants: Int, iterations: Int, problem: MultiTsp, alfa: Double, beta: Double, rho: Double): Set[MultiTspSolution] =
-    MultiAntSystem(problem, ants, alfa, beta, rho).runPareto(iterations)
+    MultiAntSystem(problem, ants, alfa, beta, rho).run(iterations)
 
   def resolve2D(ants: Int, iterations: Int, problem: MultiTsp, alfa: Double, beta: Double, rho: Double, z: Int): Set[MultiTspSolution] =
-    new MultiAntSystem2D(problem, ants, alfa, beta, rho, z).runPareto(iterations)
+    new MultiAntSystem2D(problem, ants, alfa, beta, rho, z).run(iterations)
 }
 
