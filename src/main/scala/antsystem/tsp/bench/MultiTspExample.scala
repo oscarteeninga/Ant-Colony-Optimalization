@@ -1,7 +1,8 @@
-package antsystem.bench
+package antsystem.tsp.bench
 
-import antsystem.multi.Criteria.{Distance, Security}
-import antsystem.multi._
+import antsystem.CriteriaValues
+import antsystem.tsp.multi.Criteria.{Distance, Security}
+import antsystem.tsp.multi._
 
 object MultiTspExample {
 

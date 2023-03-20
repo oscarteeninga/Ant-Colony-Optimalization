@@ -9,9 +9,12 @@ trait Problem[S <: Solution[I], I <: Item] {
 }
 
 trait Solution[I <: Item] {
+  def items: Set[I]
   def put(item: I): Solution[I]
-
-  def score: Double
+  def criteriaValues: CriteriaValues
+  def isDominatedBy(other: Solution[_]): Boolean = criteriaValues.isDominatedBy(other.criteriaValues)
 }
 
-trait Item
+trait Item {
+  def criteriaValues: CriteriaValues
+}

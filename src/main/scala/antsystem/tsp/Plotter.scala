@@ -1,8 +1,9 @@
-package antsystem.plot
+package antsystem.tsp
 
-import antsystem.bench.MultiTspExample
-import antsystem.multi.{MultiTsp, MultiTspSolution, Pareto}
-import antsystem.plot.PlotterUtils.BenchmarkParameters
+import antsystem.tsp.PlotterUtils.BenchmarkParameters
+import antsystem.tsp.bench.MultiTspExample
+import antsystem.tsp.multi.{MultiTsp, MultiTspSolution}
+import antsystem.{Pareto, Solution}
 import plotly.Plotly._
 import plotly._
 import plotly.element.Anchor.Center
@@ -58,7 +59,7 @@ object Plotter extends App {
 object PlotterUtils {
   case class BenchmarkParameters(ants: Int, iterations: Int, alfa: Double, beta: Double, rho: Double)
 
-  def plotting(solutions: Set[MultiTspSolution], name: String): Scatter = {
+  def plotting[S <: Solution[_]](solutions: Set[S], name: String): Scatter = {
     val criteriaValues = solutions.map(_.criteriaValues.criteria.values).toList.sortBy(_.head)
     val x = criteriaValues.map(_.head)
     val y = criteriaValues.map(_.last)
