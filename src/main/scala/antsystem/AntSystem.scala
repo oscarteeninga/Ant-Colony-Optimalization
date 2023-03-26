@@ -72,19 +72,10 @@ trait AntSystem[P <: Problem[S, I], S <: Solution[I], I <: Item] extends LazyLog
   protected def pick(available: Set[I], p: Map[I, Double]): I = {
     val random = Math.random()
     var count = 0.0
-    val picked = Try {
-      available.find {
-        item =>
-          count += p(item)
-          count >= random
-      }.get
-    }
-    picked match {
-      case Success(value) => value
-      case Failure(exception) =>
-        println(available)
-        println(p)
-        available.head
-    }
+    available.find {
+      item =>
+        count += p(item)
+        count >= random
+    }.get
   }
 }

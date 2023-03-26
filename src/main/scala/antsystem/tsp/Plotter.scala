@@ -45,7 +45,7 @@ object Plotter extends App {
 
   private val legend = Legend().withXanchor(Center).withYanchor(Center)
   private val layout = Layout()
-    .withTitle("Multiple-criteria comparison")
+    .withTitle("Tsp multiple-criteria comparison")
     .withWidth(1400)
     .withHeight(800)
     .withXaxis(Axis().withTitle("Distance [lower is better]"))
