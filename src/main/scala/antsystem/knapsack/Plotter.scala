@@ -42,7 +42,7 @@ object Plotter extends App {
 
   val (plots, all) = results.unzip
 
-  private val frontPareto = PlotterUtils.plotting(Pareto.pareto(all.toSet.flatten).head, "Pareto front").withMarker(Marker().withSize(3).withColor(Color.RGB(255, 0, 0)))
+  private val frontPareto = PlotterUtils.plotting(Pareto.pareto(all.toSet.flatten).head, "Pareto front").withMarker(Marker().withSize(10).withColor(Color.RGB(255, 0, 0)))
 
   private val legend = Legend().withXanchor(Center).withYanchor(Center)
   private val layout = Layout()
@@ -64,7 +64,7 @@ object PlotterUtils {
     val criteriaValues = solutions.map(_.criteriaValues.criteria.values).toList.sortBy(_.head)
     val x = criteriaValues.map(_.last)
     val y = criteriaValues.map(_.head)
-    Scatter(x, y).withName(name).withMarker(Marker().withSize(5))
+    Scatter(x, y).withName(name).withMarker(Marker().withSize(15))
   }
 }
 
