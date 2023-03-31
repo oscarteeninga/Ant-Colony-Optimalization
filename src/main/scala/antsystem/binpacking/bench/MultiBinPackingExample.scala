@@ -8,8 +8,8 @@ import scala.util.Random
 
 object MultiBinPackingExample {
   val Example: BinPacking = {
-    val items = (1 to 100).map(Element(_, Random.nextDouble(), CriteriaValues(Map(Value -> Random.nextDouble()))))
-    val binCapacity = 0.7
+    val items = (1 to 200).map(Element(_, Random.nextInt(100), CriteriaValues(Map(Value -> Random.nextInt(100)))))
+    val binCapacity = 150
     BinPacking(items.toSet, binCapacity)
   }
 }

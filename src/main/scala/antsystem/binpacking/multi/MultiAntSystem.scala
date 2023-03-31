@@ -11,4 +11,6 @@ private[binpacking] case class MultiAntSystem(problem: BinPacking, quantity: Int
     problem.items.diff(solution.items)
 
   protected def emptySolution: BinPackingSolution = BinPackingSolution.empty(problem.size)
+
+  override protected def heuristicFactor(item: Element): Double = super.heuristicFactor(item) - item.size
 }
