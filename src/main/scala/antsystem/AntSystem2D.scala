@@ -2,22 +2,30 @@ package antsystem
 
 trait AntSystem2D[P <: Problem[S, I], S <: Solution[I], I <: Item] extends AntSystem[P, S, I] {
 
-  def z: Int
-
   private var tau2D: Map[I, Map[Int, Double]] = problem.items.map(_ -> (0 to z).map(_ -> tauZero).toMap).toMap
 
-  override protected def tauFactor(edge: I): Double = Math.max(0, tau2D(edge).values.sum)
+  private var repository: Repository[S] = Repository[S](List(Set.empty))
+
+  def z: Int
+
+  override def run(iterations: Int): Set[S] = {
+    (0 to iterations).foreach { it =>
+      val solutions = ants.map(_.explore)
+      update(List(solutions))
+    }
+    repository.fronts.head
+  }
+
+  override protected def tauFactor(edge: I): Double = {
+    tau2D(edge).values.zipWithIndex.map { case (value, index) => value * (z - index) / z }.sum
+  }
 
   override protected def update(paretoFronts: List[Set[S]]): Unit = {
-    val half = paretoFronts.size
-    val best = paretoFronts.map(_.map(_.criteriaValues.avg).max).max
-    paretoFronts.zipWithIndex.take(z).foreach { case (solutions, index) =>
-      solutions.foreach { solution =>
-        // val factor = (z - index)
-        // val factor = (half - index) / half half
-        val factor = (half - index) * solution.criteriaValues.avg / half / best // half-best
-        solution.items.foreach(edge => tau2D = tau2D.updated(edge, tau2D(edge).updated(index, tau2D(edge)(index) + factor)))
-      }
+    val solutions = paretoFronts.flatten.toSet
+    repository = repository.put(solutions)
+    solutions.foreach { solution =>
+      val index = Math.min(z, repository.which(solution))
+      solution.items.foreach(edge => tau2D = tau2D.updated(edge, tau2D(edge).updated(index, tau2D(edge)(index) + 1)))
     }
     tau2D = tau2D.map { case (edge, pheromones) => edge -> pheromones.map { case (key, value) => (key, value * (1 - rho)) } }
   }

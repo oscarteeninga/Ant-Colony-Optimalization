@@ -2,8 +2,6 @@ package antsystem
 
 import com.typesafe.scalalogging.LazyLogging
 
-import scala.util.{Failure, Success, Try}
-
 trait AntSystem[P <: Problem[S, I], S <: Solution[I], I <: Item] extends LazyLogging {
 
   protected val tauZero: Double = 1.0
@@ -20,7 +18,7 @@ trait AntSystem[P <: Problem[S, I], S <: Solution[I], I <: Item] extends LazyLog
 
   protected def emptySolution: S
 
-  protected var tau: Map[I, Double] = problem.items.map(_ -> tauZero).toMap
+  private var tau: Map[I, Double] = problem.items.map(_ -> tauZero).toMap
 
   def run(iterations: Int): Set[S] = {
     Pareto.pareto {
@@ -35,7 +33,6 @@ trait AntSystem[P <: Problem[S, I], S <: Solution[I], I <: Item] extends LazyLog
 
   def next(solution: S): Option[S] = {
     val a = available(solution)
-
     Option.when(a.nonEmpty) {
       val prob = probabilities(a)
       val picked = pick(a, prob)
@@ -58,7 +55,7 @@ trait AntSystem[P <: Problem[S, I], S <: Solution[I], I <: Item] extends LazyLog
     tau = tau.map { case (edge, pheromone) => edge -> pheromone * (1 - rho) }
   }
 
-  protected def probabilities(available: Set[I]): Map[I, Double] = {
+  private def probabilities(available: Set[I]): Map[I, Double] = {
     val dividers = available.map(edge => edge -> Math.pow(tauFactor(edge), alpha) * Math.pow(heuristicFactor(edge), beta)).toMap
     val sum = dividers.values.sum
     if (sum == 0) dividers.map { case (edge, _) => edge -> 1.0 / dividers.size }
@@ -69,7 +66,7 @@ trait AntSystem[P <: Problem[S, I], S <: Solution[I], I <: Item] extends LazyLog
 
   protected def tauFactor(item: I): Double = Math.max(0, tau(item))
 
-  protected def pick(available: Set[I], p: Map[I, Double]): I = {
+  private def pick(available: Set[I], p: Map[I, Double]): I = {
     val random = Math.random()
     var count = 0.0
     available.find {
