@@ -4,6 +4,8 @@ import antsystem.CriteriaValues
 import antsystem.tsp.multi.Criteria.{Distance, Security}
 import antsystem.tsp.multi._
 
+import scala.util.Random
+
 object MultiTspExample {
 
   // https://www.researchgate.net/figure/An-instance-of-the-TSP-with-two-criteria_fig1_336396504
@@ -61,6 +63,13 @@ object MultiTspExample {
         Edge(node, Node(nodeId), CriteriaValues(Map(Distance -> criteria._1, Security -> criteria._2)))
     })
 
+    MultiTsp(Nodes(nodes: _*), Edges(edges: _*))
+  }
+
+  val Random = {
+    def randomCriteria = CriteriaValues(Map(Distance -> new Random().nextInt % 1000, Security -> new Random().nextInt % 1000))
+    val nodes = (1 to 50).map(Node)
+    val edges = nodes.flatMap(n1 => nodes.map(n2 => Edge(n1, n2, randomCriteria)))
     MultiTsp(Nodes(nodes: _*), Edges(edges: _*))
   }
 }
