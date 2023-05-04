@@ -2,7 +2,9 @@ package antsystem
 
 import com.typesafe.scalalogging.LazyLogging
 
-trait AntSystem[P <: Problem[S, I], S <: Solution[I], I <: Item] extends LazyLogging {
+import scala.util.Try
+
+trait AntSystem[P <: Problem[I], S <: Solution[I], I <: Item] extends LazyLogging {
 
   protected val tauZero: Double = 1.0
 
@@ -49,17 +51,17 @@ trait AntSystem[P <: Problem[S, I], S <: Solution[I], I <: Item] extends LazyLog
     paretoFronts.zipWithIndex.foreach { case (solutions, index) =>
       solutions.foreach { solution =>
         val factor = (fronts - index) / fronts
-        solution.items.foreach(edge => tau = tau.updated(edge, tau(edge) + factor))
+        solution.items.foreach(item => tau = tau.updated(item, tau(item) + factor))
       }
     }
-    tau = tau.map { case (edge, pheromone) => edge -> pheromone * (1 - rho) }
+    tau = tau.map { case (item, pheromone) => item -> pheromone * (1 - rho) }
   }
 
   private def probabilities(available: Set[I]): Map[I, Double] = {
-    val dividers = available.map(edge => edge -> Math.pow(tauFactor(edge), alpha) * Math.pow(heuristicFactor(edge), beta)).toMap
+    val dividers = available.map(item => item -> Math.pow(tauFactor(item), alpha) * Math.pow(heuristicFactor(item), beta)).toMap
     val sum = dividers.values.sum
-    if (sum == 0) dividers.map { case (edge, _) => edge -> 1.0 / dividers.size }
-    else dividers.map { case (edge, value) => edge -> value / sum }
+    if (sum == 0) dividers.map { case (item, _) => item -> 1.0 / dividers.size }
+    else dividers.map { case (item, value) => item -> value / sum }
   }
 
   protected def heuristicFactor(item: I): Double = Math.max(0, item.criteriaValues.avg)
@@ -69,10 +71,12 @@ trait AntSystem[P <: Problem[S, I], S <: Solution[I], I <: Item] extends LazyLog
   private def pick(available: Set[I], p: Map[I, Double]): I = {
     val random = Math.random()
     var count = 0.0
-    available.find {
-      item =>
-        count += p(item)
-        count >= random
+    Try {
+      available.find {
+        item =>
+          count += p(item)
+          count >= random
+      }.get
     }.get
   }
 }

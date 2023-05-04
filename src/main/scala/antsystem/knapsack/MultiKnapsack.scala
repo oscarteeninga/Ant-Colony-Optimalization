@@ -1,4 +1,4 @@
-package antsystem.knapsack.multi
+package antsystem.knapsack
 
 import antsystem.{Criteria, CriteriaValues, Item, Problem, Solution}
 
@@ -25,9 +25,7 @@ object KnapsackSolution {
   val Empty: KnapsackSolution = KnapsackSolution(Set.empty, 0, CriteriaValues(Criteria.values.map(_ -> 0.0).toMap))
 }
 
-case class Knapsack(items: Set[Element], size: Double) extends Problem[KnapsackSolution, Element] {
-  override type T = Map[Element, Double]
-}
+case class Knapsack(items: Set[Element], size: Double) extends Problem[Element]
 
 object Knapsack {
   def resolve(ants: Int, iterations: Int, problem: Knapsack, alfa: Double, beta: Double, rho: Double): Set[KnapsackSolution] =

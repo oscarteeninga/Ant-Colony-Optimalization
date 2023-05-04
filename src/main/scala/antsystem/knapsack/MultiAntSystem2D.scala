@@ -1,4 +1,4 @@
-package antsystem.knapsack.multi
+package antsystem.knapsack
 
 import antsystem.AntSystem2D
 

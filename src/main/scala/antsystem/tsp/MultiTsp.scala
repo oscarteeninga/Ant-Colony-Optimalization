@@ -1,4 +1,4 @@
-package antsystem.tsp.multi
+package antsystem.tsp
 
 import antsystem.{Criteria, CriteriaValues, Item, Problem, Solution}
 
@@ -40,10 +40,8 @@ private[tsp] object MultiTspSolution {
     MultiTspSolution(List.empty, Set.empty, CriteriaValues(Criteria.values.map(_ -> 0.0).toMap))
 }
 
-case class MultiTsp(nodes: Nodes, edges: Edges) extends Problem[MultiTspSolution, Edge] {
+case class MultiTsp(nodes: Nodes, edges: Edges) extends Problem[Edge] {
   def neighbours(node: Node): Set[Node] = edges.getFrom(node).map(_.node2)
-
-  override type T = Map[Edge, Double]
 
   override def items: Set[Edge] = edges.edges.toSet
 }

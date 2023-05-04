@@ -1,8 +1,7 @@
-package antsystem.tsp.bench
+package antsystem.tsp
 
 import antsystem.CriteriaValues
-import antsystem.tsp.multi.Criteria.{Distance, Security}
-import antsystem.tsp.multi._
+import antsystem.tsp.Criteria.{Distance, Security}
 
 import scala.util.Random
 
@@ -67,8 +66,8 @@ object MultiTspExample {
   }
 
   val Random = {
-    def randomCriteria = CriteriaValues(Map(Distance -> new Random().nextInt % 1000, Security -> new Random().nextInt % 1000))
-    val nodes = (1 to 50).map(Node)
+    def randomCriteria = CriteriaValues(Map(Distance -> Math.abs(new Random().nextInt % 1000), Security -> Math.abs(new Random().nextInt % 1000)))
+    val nodes = (1 to 100).map(Node)
     val edges = nodes.flatMap(n1 => nodes.map(n2 => Edge(n1, n2, randomCriteria)))
     MultiTsp(Nodes(nodes: _*), Edges(edges: _*))
   }

@@ -1,10 +1,6 @@
 package antsystem
 
-trait Problem[S <: Solution[I], I <: Item] {
-  type Item = I
-  type Solution = S
-  type T
-
+trait Problem[I <: Item] {
   def items: Set[I]
 }
 

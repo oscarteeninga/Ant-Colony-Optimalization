@@ -1,6 +1,6 @@
-package antsystem.binpacking.multi
+package antsystem.binpacking
 
-import antsystem.binpacking.multi.Criteria.{BinsCount, Value}
+import antsystem.binpacking.Criteria.{BinsCount, Value}
 import antsystem.{Criteria, CriteriaValues, Item, Problem, Solution}
 
 private[binpacking] case class Element(id: Int, size: Double, criteriaValues: CriteriaValues) extends Item {
@@ -37,9 +37,7 @@ object BinPackingSolution {
   def empty(binSize: Double): BinPackingSolution = BinPackingSolution(Set.empty, Set.empty, binSize, CriteriaValues(Criteria.values.map(_ -> 0.0).toMap))
 }
 
-case class BinPacking(items: Set[Element], size: Double) extends Problem[BinPackingSolution, Element] {
-  override type T = Map[Element, Double]
-}
+case class BinPacking(items: Set[Element], size: Double) extends Problem[Element]
 
 object BinPacking {
   def resolve(ants: Int, iterations: Int, problem: BinPacking, alfa: Double, beta: Double, rho: Double): Set[BinPackingSolution] =

@@ -1,4 +1,4 @@
-package antsystem.tsp.multi
+package antsystem.tsp
 
 import antsystem.AntSystem
 import com.typesafe.scalalogging.LazyLogging

@@ -1,6 +1,6 @@
 package antsystem
 
-trait AntSystem2D[P <: Problem[S, I], S <: Solution[I], I <: Item] extends AntSystem[P, S, I] {
+trait AntSystem2D[P <: Problem[I], S <: Solution[I], I <: Item] extends AntSystem[P, S, I] {
 
   private var tau2D: Map[I, Map[Int, Double]] = problem.items.map(_ -> (0 to z).map(_ -> tauZero).toMap).toMap
 
@@ -17,7 +17,7 @@ trait AntSystem2D[P <: Problem[S, I], S <: Solution[I], I <: Item] extends AntSy
   }
 
   override protected def tauFactor(edge: I): Double = {
-    tau2D(edge).values.zipWithIndex.map { case (value, index) => value * (z - index) / z }.sum
+    tau2D(edge).values.zipWithIndex.map { case (value, index) => value * (z - index) }.sum
   }
 
   override protected def update(paretoFronts: List[Set[S]]): Unit = {
@@ -25,8 +25,8 @@ trait AntSystem2D[P <: Problem[S, I], S <: Solution[I], I <: Item] extends AntSy
     repository = repository.put(solutions)
     solutions.foreach { solution =>
       val index = Math.min(z, repository.which(solution))
-      solution.items.foreach(edge => tau2D = tau2D.updated(edge, tau2D(edge).updated(index, tau2D(edge)(index) + 1)))
+      solution.items.foreach(item => tau2D = tau2D.updated(item, tau2D(item).updated(index, tau2D(item)(index) + 1)))
     }
-    tau2D = tau2D.map { case (edge, pheromones) => edge -> pheromones.map { case (key, value) => (key, value * (1 - rho)) } }
+    tau2D = tau2D.map { case (item, pheromones) => item -> pheromones.map { case (key, value) => (key, value * (1 - rho)) } }
   }
 }

@@ -1,4 +1,4 @@
-package antsystem.binpacking.multi
+package antsystem.binpacking
 
 import antsystem.AntSystem2D
 
