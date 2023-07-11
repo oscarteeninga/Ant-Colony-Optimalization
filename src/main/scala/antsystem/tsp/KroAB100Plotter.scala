@@ -4,11 +4,11 @@ import antsystem.Plotter
 import antsystem.Plotter.BenchmarkParameters
 
 
-object MultiTspPlotter extends Plotter[Edge, MultiTspSolution] {
+object KroAB100Plotter extends Plotter[Edge, MultiTspSolution] {
 
-  override protected lazy val title: String = "Multi travelling salesman problem"
-  override protected lazy val xLabel: String = "Distance [less is better]"
-  override protected lazy val yLabel: String = "Security [greater is better]"
+  override protected lazy val title: String = "Multi travelling salesman problem - KroAB100"
+  override protected lazy val xLabel: String = "B [less is better]"
+  override protected lazy val yLabel: String = "A [greater is better]"
   override protected lazy val problem: MultiTsp = KroAB100.kroAB100
 
   override protected def run(params: BenchmarkParameters): Set[MultiTspSolution] = {

@@ -21,30 +21,25 @@ trait Plotter[I <: Item, S <: Solution[I]] extends App {
 
   val iterations = 10
   val ants = 10
-  val alfa = 2
-  val beta = 2
 
-  val startOneDim = DateTime.now()
+  def test[A](f: (Double, Double, Double) => A): (List[A], Double) = {
+    val start = DateTime.now()
+    val results = for {
+      _ <- 1 to 3
+      rho <- List(0.1, 0.5)
+      alfa <- 1 to 2
+      beta <- 1 to 2
+    } yield f(alfa, beta, rho)
+    (results.toList, (DateTime.now().getSecondOfDay - start.getSecondOfDay).toDouble / 5*2*2*2)
+  }
 
-  private val oneResults = for {
-    _ <- 1 to 8
-    rho <- (1 to 5).map(_.toDouble / 10)
-    alfa <- 0 to 2
-    beta <- 1 to 3
-  } yield run(BenchmarkParameters(ants, iterations, alfa, beta, rho))
+  private val (oneResults, oneTime) = test((alfa, beta, rho) => run(BenchmarkParameters(ants, iterations, alfa, beta, rho)))
 
-  println((DateTime.now().getSecondOfDay - startOneDim.getSecondOfDay).toDouble / 360)
+  println(oneTime)
 
-  val startTwoDim = DateTime.now()
+  private val (twoResults, twoTime) = test((alfa, beta, rho) => run2D(BenchmarkParameters(ants, iterations, alfa, beta, rho), ants))
 
-  private val twoResults = for {
-    _ <- 1 to 8
-    rho <- (1 to 5).map(_.toDouble / 10)
-    alfa <- 0 to 2
-    beta <- 1 to 3
-  } yield run2D(BenchmarkParameters(ants, iterations, alfa, beta, rho), ants)
-
-  println((DateTime.now().getSecondOfDay - startTwoDim.getSecondOfDay).toDouble / 360)
+  println(twoTime)
 
   val all = twoResults.flatten ++ oneResults.flatten
 
@@ -54,7 +49,28 @@ trait Plotter[I <: Item, S <: Solution[I]] extends App {
     Plotter.plotting(Pareto.pareto(all.toSet).head, "Pareto front").withMarker(Marker().withSize(6).withColor(Color.RGB(255, 0, 0))),
   )
 
+//  plots.plot(path = "./resources/plot/plot.html", layout = Plotter.layout(title, xLabel, yLabel))
+//
+//  val plots = List(
+//    Plotter.plotting(oneResults.flatten.toSet, s"Basic"),
+//    Plotter.plotting(twoResults.flatten.toSet, s"Two-dimension"),
+//  )
+
   plots.plot(path = "./resources/plot/plot.html", layout = Plotter.layout(title, xLabel, yLabel))
+}
+
+trait VolumePlotter[I <: Item, S <: Solution[I]] extends App {
+
+  protected val problem: Problem[I]
+  protected val ants: Int
+
+  def respository(parameters: BenchmarkParameters): Repository[S]
+
+  private val (xs, ys, zs) = respository(BenchmarkParameters(25, 100, 2.0, 2.0, 0.2)).frontsByIterations.unzip3
+
+  println(xs.mkString(","))
+  println(ys.mkString(","))
+  println(zs.mkString(","))
 }
 
 object Plotter {

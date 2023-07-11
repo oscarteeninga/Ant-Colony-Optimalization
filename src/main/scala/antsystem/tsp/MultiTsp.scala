@@ -12,7 +12,13 @@ private[tsp] object Criteria {
     override def factor: Int = 1
   }
 
-  val values: List[Criteria] = List(Distance, Security)
+  case object A extends Criteria
+
+  case object B extends Criteria {
+    override def factor: Int = 1
+  }
+
+  val values: List[Criteria] = List(A, B, Distance, Security)
 }
 
 private[tsp] case class Edge(node1: Node, node2: Node, criteriaValues: CriteriaValues) extends Item
@@ -28,7 +34,7 @@ private[tsp] case class Edges(edges: Edge*) {
 }
 
 case class MultiTspSolution(nodes: List[Node], items: Set[Edge], criteriaValues: CriteriaValues) extends Solution[Edge] {
-  def startWith(node: Node): MultiTspSolution = MultiTspSolution(List(node), Set.empty, CriteriaValues(Criteria.values.map(_ -> 0.0).toMap))
+  def startWith(node: Node, criteria: List[Criteria]): MultiTspSolution = MultiTspSolution(List(node), Set.empty, CriteriaValues(criteria.map(_ -> 0.0).toMap))
 
   def put(edge: Edge): MultiTspSolution = MultiTspSolution(edge.node2 :: nodes, Set(edge) ++ items, criteriaValues ++ edge.criteriaValues)
 

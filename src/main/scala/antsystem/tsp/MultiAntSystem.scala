@@ -15,5 +15,5 @@ private[tsp] case class MultiAntSystem(problem: MultiTsp, quantity: Int, alpha: 
     neighbours.filterNot(edge => solution.nodes.contains(edge.node2))
   }
 
-  protected def emptySolution: MultiTspSolution = MultiTspSolution.Empty.startWith(problem.nodes.nodes.head)
+  protected def emptySolution: MultiTspSolution = MultiTspSolution.Empty.startWith(problem.nodes.nodes.head, problem.edges.edges.head.criteriaValues.criteria.keys.toList)
 }

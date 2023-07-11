@@ -24,7 +24,7 @@ case class BinPackingSolution(items: Set[Element], bins: Set[Bin], binSize: Doub
     val newBins = bins.headOption match {
       case Some(bin) if bin.capacity >= element.size => Set(Bin(Set(element) ++ bin.items, bin.capacity - element.size)) ++ bins.tail
       case _ if binSize >= element.size => Set(Bin(Set(element), binSize - element.size)) ++ bins
-      case _ => bins
+      case _ => throw new Exception("Element too big, change bins capacity or remove element from set")
     }
     val valueCriteria = if (binSize < element.size) criteriaValues.criteria(Value) else criteriaValues.criteria(Value) + element.criteriaValues.criteria(Value)
     BinPackingSolution(Set(element) ++ items, newBins, binSize, CriteriaValues(Map(BinsCount -> newBins.size, Value -> valueCriteria)))

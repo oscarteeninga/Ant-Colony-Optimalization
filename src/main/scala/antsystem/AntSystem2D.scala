@@ -4,7 +4,7 @@ trait AntSystem2D[P <: Problem[I], S <: Solution[I], I <: Item] extends AntSyste
 
   private var tau2D: Map[I, Map[Int, Double]] = problem.items.map(_ -> (0 to z).map(_ -> tauZero).toMap).toMap
 
-  private var repository: Repository[S] = Repository[S](List(Set.empty))
+  var repository: Repository[S] = Repository[S](List(Set.empty), List(Set.empty))
 
   def z: Int
 
